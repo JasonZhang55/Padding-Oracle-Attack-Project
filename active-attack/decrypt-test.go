@@ -53,9 +53,10 @@ func computeHmac(message []byte, key []byte) []byte {
 	hash.Write([]byte(k_ipad))
 	hash.Write([]byte(message))
 	inner := hash.Sum(nil)
-	hash.Write([]byte(k_opad))
-	hash.Write([]byte(inner))
-	outer := hash.Sum(nil)
+	hash2 := sha256.New()
+	hash2.Write([]byte(k_opad))
+	hash2.Write([]byte(inner))
+	outer := hash2.Sum(nil)
 
 	return outer
 

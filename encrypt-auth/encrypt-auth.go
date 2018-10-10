@@ -21,10 +21,10 @@ func main()  {
 	inputSet.Parse(os.Args[2:])
 
 	keyByte := []byte(*key)
-	fmt.Println("length of keybyte",len(keyByte))
-	fmt.Println("key:", *key)
-	fmt.Println("input:", *input)
-	fmt.Println(len(os.Args))
+	//fmt.Println("length of keybyte",len(keyByte))
+	//fmt.Println("key:", *key)
+	//fmt.Println("input:", *input)
+	//fmt.Println(len(os.Args))
 
 	if len(os.Args) < 8 {
 		fmt.Println("Operation mode (encrypt, decrypt), key, input and output file must be included.")
@@ -38,11 +38,11 @@ func main()  {
 		keyMac := keyByte[16:]
 		tagT := computeHmac([]byte(message), keyMac)
 		messageP := append([]byte(message), tagT...)
-		fmt.Printf("%d\n", len(messageP))
+		//fmt.Printf("%d\n", len(messageP))
 		messagePP := padding(messageP)
-		fmt.Printf("%x\n", messagePP)
+		//fmt.Printf("%x\n", messagePP)
 		cipherText, _ := encryptAesCBC(messagePP, keyEnc)
-		fmt.Printf("%x\n", cipherText)
+		//fmt.Printf("%x\n", cipherText)
 		writeFile(cipherText, *output)
 	} else if mode == "decrypt"{
 		//decrypt
@@ -61,7 +61,7 @@ func main()  {
 			return
 		}
 		writeFile(plainText, *output)
-		fmt.Printf("%x\n", plainText)
+		//fmt.Printf("%x\n", plainText)
 	} else {
 		fmt.Println("encrypt and decrypt only")
 		os.Exit(1)
@@ -95,10 +95,10 @@ func computeHmac(message []byte, key []byte) []byte {
 	hash.Write([]byte(k_ipad))
 	hash.Write([]byte(message))
 	inner := hash.Sum(nil)
-	hash.Write([]byte(k_opad))
-	hash.Write([]byte(inner))
-	outer := hash.Sum(nil)
-
+	hash2 := sha256.New()
+	hash2.Write([]byte(k_opad))
+	hash2.Write([]byte(inner))
+	outer := hash2.Sum(nil)
 	return outer
 
 }
