@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"flag"
 	"fmt"
@@ -20,7 +21,9 @@ func main()  {
 	output := inputSet.String("o", "", "output file")
 	inputSet.Parse(os.Args[2:])
 
-	keyByte := []byte(*key)
+
+	hexKey, _ := hex.DecodeString(*key)
+	keyByte := []byte(hexKey)
 	//fmt.Println("length of keybyte",len(keyByte))
 	//fmt.Println("key:", *key)
 	//fmt.Println("input:", *input)
@@ -84,9 +87,12 @@ func writeFile(content []byte, path string)  {
 	}
 }
 
-func computeHmac(message []byte, key []byte) []byte {
+func computeHmac(message []byte, keyMac []byte) []byte {
 	k_ipad := make([]byte, 16)
 	k_opad := make([]byte, 16)
+	key := make([]byte, 48)
+	key = append(keyMac, key...)
+	print(len(key))
 	for i := 0; i < 16; i++ {
 		k_ipad[i] = key[i] ^ 0x36
 		k_opad[i] = key[i] ^ 0x5c

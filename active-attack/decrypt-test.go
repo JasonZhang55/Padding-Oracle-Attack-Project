@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/aes"
 	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"flag"
 	"fmt"
@@ -15,8 +16,9 @@ func main() {
 
 	cipherText := readFile(*input)
 	//key := "qwertyuioplkjhgfdsazxcvbnmnbvcxz"
-	key :=  "qwertyuiopasdfghjklzxcvbnmnbvcxz"
-	keyByte := []byte(key)
+	key :=  "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+	hexKey, _ := hex.DecodeString(key)
+	keyByte := []byte(hexKey)
 	keyEnc := keyByte[:16]
 	keyMac := keyByte[16:]
 	plainTextT, err:= decryptAesCBC([]byte(cipherText), keyEnc)
@@ -42,9 +44,11 @@ func readFile(path string) string {
 	return string(content)
 }
 
-func computeHmac(message []byte, key []byte) []byte {
+func computeHmac(message []byte, keyMac []byte) []byte {
 	k_ipad := make([]byte, 16)
 	k_opad := make([]byte, 16)
+	key := make([]byte, 48)
+	key = append(keyMac, key...)
 	for i := 0; i < 16; i++ {
 		k_ipad[i] = key[i] ^ 0x36
 		k_opad[i] = key[i] ^ 0x5c
